@@ -37,11 +37,13 @@ export default function Navbar() {
                         <p className="text-[#d24b78] text-sm font-semibold translate-y-[1px] mx-2 font-Montserrat">Account</p>
                     </div>
                     </Link>
+                    <Link href='/Cart'>
                     <div className="flex relative">
                         <div className="size-3 absolute right-11 top-[-3px] flex justify-center items-center rounded-full bg-pink-400 text-white text-[8px]">1</div>
                         <RiShoppingCartLine className=" text-[#d24b78] text-xl cursor-pointer" />
                         <p className="text-[#d24b78] text-sm font-semibold translate-y-[1px] mx-2 font-Montserrat">Cart</p>
                     </div>
+                    </Link>
                 </div>
             </div>
 

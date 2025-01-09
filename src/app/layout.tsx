@@ -2,6 +2,7 @@
 'use client';  // Add this to specify that this component is client-side
 import { Geist, Geist_Mono } from 'next/font/google';
 import { ApolloProvider, InMemoryCache, ApolloClient } from '@apollo/client'; // Apollo Client imports
+import { CartProvider } from './context/cartContext';
 import './globals.css';
 
 // Initialize the Apollo Client
@@ -27,7 +28,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>       
         <ApolloProvider client={client}>
+          <CartProvider>
           {children} 
+          </CartProvider>
         </ApolloProvider>
       </body>
     </html>
