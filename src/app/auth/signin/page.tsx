@@ -8,35 +8,42 @@ import bgimg from '@/assets/close-up-macro-flower.jpg';
 export default function SignInPage() {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
-      const res = await fetch('/api/auth/signin', {
+      const response = await fetch('/api/signin', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify(formData),
       });
 
-      const data = await res.json();
+      const data = await response.json();
 
-      if (!res.ok) {
-        setErrorMessage(data.message);
-        return;
+      if (response.ok) {
+        alert('Login successful!');
+        localStorage.setItem('token', data.token);
+        window.location.href = '/'; 
+      } else {
+        setErrorMessage(data.message || 'Login failed. Please try again.');
       }
-
-      alert('Login successful!');
-      // Redirect to dashboard or any other page
-      window.location.href = '/dashboard';
     } catch (error) {
-      console.log('Error:',error)
+      console.error('Error:', error);
+      setErrorMessage('Something went wrong. Please try again later.');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="flex flex-wrap">
-      {/* Right Section */}
+      
       <div className="pointer-events-none relative hidden h-screen select-none bg-black md:block md:w-1/2">
         <Image
           className="absolute top-0 h-full w-full object-cover opacity-90"
@@ -45,6 +52,7 @@ export default function SignInPage() {
           layout="fill"
         />
       </div>
+
       {/* Left Section */}
       <div className="flex w-full flex-col md:w-1/2">
         <div className="flex justify-center pt-12 md:-mb-24 md:justify-start md:pl-12">
@@ -95,14 +103,14 @@ export default function SignInPage() {
               type="submit"
               className="w-full rounded-lg bg-gray-900 px-4 py-2 text-center text-base font-semibold text-white shadow-md ring-gray-500 ring-offset-2 transition focus:ring-2"
             >
-              Log in
+              {loading ? 'Logging In...' : 'Log in'}
             </button>
           </form>
           <div className="py-12 text-center">
             <p className="whitespace-nowrap text-gray-600">
               Don&apos;t have an account?{' '}
               <Link
-                href="/SignUp"
+                href="/auth/signup"
                 className="underline-offset-4 font-semibold text-gray-900 underline"
               >
                 Sign up for free.

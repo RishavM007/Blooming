@@ -31,7 +31,7 @@ export default function Navbar() {
                 </Link>
 
                 <div className="flex items-center mr-20 space-x-10">
-                    <Link href='/SignIn'>
+                    <Link href='/auth/signin'>
                     <div className="flex">
                         <RiAccountPinCircleLine className="text-[#d24b78] text-xl cursor-pointer" />
                         <p className="text-[#d24b78] text-sm font-semibold translate-y-[1px] mx-2 font-Montserrat">Account</p>

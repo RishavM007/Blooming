@@ -11,10 +11,9 @@ type Product = {
     altText: string;
     sourceUrl: string;
   };
-
 };
 
-const GRAPHQL_URL = 'http://localhost/wordpress3/graphql';
+const GRAPHQL_URL = 'https://demo.bixeltek.com/headless/graphql';
 
 export default function Product() {
   const [data, setData] = useState<Product[]>([]);
@@ -28,27 +27,29 @@ export default function Product() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             query: `
-            query NewQuery {
-  products {
-    nodes {
-      name
-      image {
-        date
-        altText
-        link
-        sourceUrl(size: LARGE)
-      }
-      id
-    }
-  }
-}
+              query GetBouquetProducts {
+                productCategories(where: {slug: "chocolates"}) {
+                  nodes {
+                    products {
+                      nodes {
+                        name
+                        image {
+                          altText
+                          sourceUrl(size: LARGE)
+                        }
+                        id
+                      }
+                    }
+                  }
+                }
+              }
             `,
           }),
         });
 
         const result = await res.json();
-        console.log('GraphQL Response:', result); // Log to inspect the structure
-        const nodes = result?.data?.products?.nodes || [];
+        console.log('GraphQL Response:', result);
+        const nodes = result?.data?.productCategories?.nodes?.[0]?.products?.nodes || [];
         setData(nodes);
         setLoading(false);
       } catch (error) {

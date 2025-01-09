@@ -1,40 +1,41 @@
-"use client";
-
-import React, { useState, ChangeEvent, FormEvent } from "react";
-import { useRouter } from "next/navigation";
+'use client';
+import { useMutation } from '@apollo/client';
+import { SIGN_UP } from '@/app/lib/queries';
+import { ChangeEvent, FormEvent, useState } from 'react';
 
 interface FormData {
-  firstname: string;
-  lastname: string;
+  firstName: string;
+  lastName: string;
   username: string;
   email: string;
   password: string;
-  phone?: number; // Ensure this remains a number.
-  gender?: string;
+  gender: string;
+  phone:string;
 }
 
 const RegistrationPage: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
-    firstname: "",
-    lastname: "",
+    firstName: "",
+    lastName: "",
     username: "",
     email: "",
     password: "",
-    phone: undefined, // Initialize `phone` as `undefined`.
     gender: "",
+    phone:"",
   });
 
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState<string>("");
-  const router = useRouter();
+
+  const [signUp, { loading, error: mutationError }] = useMutation(SIGN_UP,{
+    fetchPolicy:"no-cache"
+  });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-
-    // Ensure `phone` is handled as a number.
     setFormData({
       ...formData,
-      [name]: name === "phone" ? parseInt(value, 10) || undefined : value,
+      [name]: value,
     });
   };
 
@@ -42,32 +43,32 @@ const RegistrationPage: React.FC = () => {
     e.preventDefault();
     setError("");
     setSuccess("");
-  
+
     try {
-      const response = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await signUp({
+        variables: {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          username: formData.username,
+          password: formData.password,
+          phone: formData.phone  || '123456789',
         },
-        body: JSON.stringify(formData),
       });
-  
-      if (response.ok) {
+
+      if (response.data?.registerUser) {
         setSuccess("Registration successful! Redirecting to Sign In...");
         setTimeout(() => {
-          router.push("/SignIn");
+          window.location.href = "/auth/signin";
         }, 2000);
       } else {
-        const data = await response.json(); // Parse the JSON response for error details
-        console.error("Error:", data);
-        setError(data.message || "An error occurred during registration.");
+        setError("An error occurred during registration.");
       }
     } catch (err) {
-      console.error("Network Error:", err);
-      setError("Failed to register. Please check your connection and try again.");
+      console.error("Apollo Error: ", err);
+      setError(mutationError?.message || "Failed to register. Please try again.");
     }
   };
-  
 
   return (
     <div className="flex flex-wrap items-center justify-center lg:space-x-8 p-6">
@@ -83,26 +84,26 @@ const RegistrationPage: React.FC = () => {
 
           <div className="grid gap-3 md:grid-cols-2">
             <div>
-              <label htmlFor="firstName">First Name</label>
+              <label htmlFor="firstname">First Name</label>
               <input
                 type="text"
-                id="firstName"
-                name="firstname"
-                placeholder="Your Name"
-                value={formData.firstname}
+                id="firstname"
+                name="firstName"
+                placeholder="Your First Name"
+                value={formData.firstName}
                 onChange={handleChange}
                 className="mt-2 h-12 w-full rounded-md bg-gray-100 px-3"
                 required
               />
             </div>
             <div>
-              <label htmlFor="lastName">Last Name</label>
+              <label htmlFor="lastname">Last Name</label>
               <input
                 type="text"
-                id="lastName"
-                name="lastname"
-                placeholder="Last Name"
-                value={formData.lastname}
+                id="lastname"
+                name="lastName"
+                placeholder="Your Last Name"
+                value={formData.lastName}
                 onChange={handleChange}
                 className="mt-2 h-12 w-full rounded-md bg-gray-100 px-3"
                 required
@@ -177,7 +178,7 @@ const RegistrationPage: React.FC = () => {
                 id="phone"
                 name="phone"
                 placeholder="+543 5445 0543"
-                value={formData.phone || ""}
+                value={formData.phone}
                 onChange={handleChange}
                 className="mt-2 h-12 w-full rounded-md bg-gray-100 px-3"
               />
@@ -188,8 +189,9 @@ const RegistrationPage: React.FC = () => {
             <button
               type="submit"
               className="mt-5 w-full rounded-md bg-blue-600 p-2 text-center font-semibold text-white hover:bg-blue-700"
+              disabled={loading}
             >
-              Get Started
+              {loading ? 'Registering...' : 'Get Started'}
             </button>
           </div>
         </form>
