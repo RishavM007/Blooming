@@ -51,47 +51,48 @@ export default function FeaturedProducts() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             query: `
-              query GetProducts {
-                products {
-                  nodes {
-                    name
-                    image {
-                      altText
-                      sourceUrl(size: LARGE)
-                    }
-                    id
-                    productId
-                    ... on SimpleProduct {
-                      regularPrice
-                      salePrice
-                    }
-                    ... on VariableProduct {
-                      regularPrice
-                      salePrice
-                    }
-                  }
-                }
-                productCategories {
-                  nodes {
-                    name
-                    slug
-                    products {
-                      nodes {
-                        name
-                        image {
-                          altText
-                          sourceUrl
-                        }
-                        productId
-                        ... on SimpleProduct {
-                          regularPrice
-                          salePrice
-                        }
-                      }
-                    }
-                  }
-                }
-              }
+             query GetProducts {
+  products {
+    nodes {
+      name
+      image {
+        altText
+        sourceUrl(size: LARGE)
+      }
+      id
+      productId
+      ... on SimpleProduct {
+        regularPrice
+        salePrice
+      }
+      ... on VariableProduct {
+        regularPrice
+        salePrice
+      }
+    }
+  }
+  productCategories {
+    nodes {
+      name
+      slug
+      products {
+        nodes {
+          name
+          image {
+            altText
+            sourceUrl
+          }
+          productId
+          ... on SimpleProduct {
+            regularPrice
+            salePrice
+          }
+          id
+        }
+      }
+    }
+  }
+}
             `,
           }),
         });
@@ -99,7 +100,7 @@ export default function FeaturedProducts() {
         if (!response.ok) throw new Error('Failed to fetch products');
 
         const result: GraphQLResponse = await response.json();
-
+        console.log('GraphQL Result:', result);
         const bouquetProducts =
           result.data.productCategories.nodes.find((category) => category.slug === 'bouquet')
             ?.products.nodes || [];
@@ -120,9 +121,13 @@ export default function FeaturedProducts() {
 
     fetchProducts();
   }, []);
-
   const bouquetProducts = products.filter((product) => product.category === 'Bouquet');
   const chocolateProducts = products.filter((product) => product.category === 'Chocolates');
+
+  bouquetProducts.map(product =>{
+    console.log(product.productId)
+    console.log(product.id)
+  })
 
   return (
     <div className="rounded-t-3xl py-20">
@@ -147,7 +152,7 @@ export default function FeaturedProducts() {
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
                 {bouquetProducts.map((product) => (
                   <div key={product.productId} className="p-4 flex flex-col h-full">
-                    <Link href={`/products/${product.id}`}>
+                    <Link href={`/Products/${product.id}`}>
                       <div className="relative mb-4 w-[300px] h-[300px]">
                         <Image
                           src={product.image.sourceUrl}
@@ -184,7 +189,7 @@ export default function FeaturedProducts() {
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
                 {chocolateProducts.map((product) => (
                   <div key={product.productId} className="p-4 flex flex-col h-full">
-                    <Link href={`/products/${product.id}`}>
+                    <Link href={`/Products/${product.id}`}>
                       <div className="relative mb-4 w-[300px] h-[300px]">
                         <Image
                           src={product.image.sourceUrl}
