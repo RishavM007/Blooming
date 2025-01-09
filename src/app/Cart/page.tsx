@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useCart } from '../context/cartContext';
+import Link from 'next/link';
 import Image from 'next/image';
 
 const CartPage: React.FC = () => {
@@ -20,7 +21,7 @@ const CartPage: React.FC = () => {
         return (
             <div className="text-center py-20">
                 <h1 className="text-3xl font-semibold mb-4">Your Cart is Empty</h1>
-                <a href="/" className="text-blue-500 hover:underline">Continue Shopping</a>
+                <Link href="/" className="text-blue-500 hover:underline">Continue Shopping</Link>
             </div>
         );
     }
@@ -112,12 +113,14 @@ const CartPage: React.FC = () => {
                             <span>Free</span>
                         </div>
                     </div>
+                    <Link href='/Checkout'>                    
                     <button
                         onClick={handleCheckout}
                         className="w-full mt-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
                     >
                         Proceed to Checkout
                     </button>
+                    </Link>
                 </div>
             </div>
         </section>
