@@ -2,6 +2,8 @@
 
 import React from 'react';
 import { useCart } from '../context/cartContext';
+import emptycart from '@/assets/empty-cart.png'
+import { TiPlus, TiMinus } from "react-icons/ti";
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -19,21 +21,27 @@ const CartPage: React.FC = () => {
 
     if (cart.length === 0) {
         return (
-            <div className="text-center py-20">
-                <h1 className="text-3xl font-semibold mb-4">Your Cart is Empty</h1>
-                <Link href="/" className="text-blue-500 hover:underline">Continue Shopping</Link>
+            <div className="text-center flex flex-col items-center pt-7">
+                <Image src={emptycart} alt='emptycart' />
+                <h1 className="text-3xl font-Cinzel font-semibold mb-4">Your Cart is Currently Empty!</h1>
+                <p className='font-Montserrat'>Before Proceding to checkout you must add some products to your shopping cart.</p>
+                <p className='font-Montserrat'>You will find a lot of intersting products in our 'Shop' page</p>
+                <Link href="/">
+                <button className='px-4 py-2 bg-white border font-Montserrat hover:text-white hover:bg-pink-700 hover:border-pink-700 border-neutral-800 my-5 text-black'>
+                    Return to Shop
+                </button>
+                </Link>
             </div>
         );
     }
 
     return (
         <section className="py-12 sm:py-16">
-            <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Left: Cart Items */}
-                <div className="lg:col-span-2 space-y-6">
-                    <h1 className="text-3xl font-semibold mb-8">Shopping Cart</h1>
-                    {cart.map((item) => (
-                        <div key={item.id} className="flex items-center gap-4">
+            <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <div className="lg:col-span-2 space-y-0">
+                    <h1 className="text-3xl font-semibold font-Montserrat mb-8">Shopping Cart</h1>
+                    {cart.map((item,index) => (
+                        <div key={item.id} className={`flex ${index%2===0?'border-b border-black':'border-t-none'} ${index == (cart.length -1 )?'border-none':' border-b border-black'}  p-3 items-center gap-4`}>
                             <Image
                                 src={item.image}
                                 alt={item.name}
@@ -42,29 +50,29 @@ const CartPage: React.FC = () => {
                                 className="rounded-md"
                             />
                             <div className="flex-grow">
-                                <h2 className="font-medium">{item.name}</h2>
-                                <p className="text-sm text-gray-600">Price: {item.price * 1000} د.إ</p>
-                                <div className="flex items-center mt-2">
+                                <h2 className="font-medium text-lg font-Montserrat">{item.name}</h2>
+                                <p className="text-xs text-gray-700 font-Montserrat">Price: {item.price * 1000} د.إ</p>
+                                <div className="flex items-center mt-4">
                                     <button
                                         onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                                        className="px-2 py-1 border rounded-md bg-gray-200 hover:bg-gray-300"
+                                        className=" flex item-center p-1 justify-center border rounded-md bg-gray-200 hover:bg-gray-300"
                                         disabled={item.quantity <= 1}
                                     >
-                                        -
+                                        <TiMinus />
                                     </button>
-                                    <span className="px-4">{item.quantity}</span>
+                                    <span className="px-4 font-Montserrat">{item.quantity}</span>
                                     <button
                                         onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                                        className="px-2 py-1 border rounded-md bg-gray-200 hover:bg-gray-300"
+                                        className=" flex item-center p-1 justify-center border rounded-md bg-gray-200 hover:bg-gray-300"
                                     >
-                                        +
+                                        <TiPlus />
                                     </button>
                                 </div>
                             </div>
                             <p className="font-medium">{1000 * item.price * item.quantity} د.إ</p>
                             <button
                                 onClick={() => removeFromCart(item.id)}
-                                className="text-red-500 hover:underline"
+                                className="text-red-600 text-sm font-Montserrat hover:underline"
                             >
                                 Remove
                             </button>
@@ -81,8 +89,8 @@ const CartPage: React.FC = () => {
                 </div>
 
                 {/* Right: Cart Totals */}
-                <div className="bg-gray-100 p-6 rounded-lg shadow-md">
-                    <h2 className="text-2xl font-semibold mb-6">Cart Totals</h2>
+                <div className="bg-white border border-neutral-800 rounded-xl p-6">
+                    <h2 className="text-2xl font-semibold font-Montserrat mb-6">Cart Totals</h2>
                     <div className="mb-4">
                         <label htmlFor="coupon" className="block text-sm font-medium text-gray-700 mb-2">
                             Add a Coupon
